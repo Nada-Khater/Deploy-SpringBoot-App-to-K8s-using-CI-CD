@@ -3,7 +3,7 @@ USER root
 
 # Update the package index and install necessary packages
 RUN apt-get update && apt-get install -y \
-    openjdk-11-jdk \
+    openjdk-17-jdk \
     openssh-server \
     apt-transport-https \
     ca-certificates \
