@@ -3,6 +3,7 @@ pipeline {
         label 'slave_container'
     }
     
+    
     stages {
         stage('Checkout Code') {
             steps {
@@ -29,6 +30,19 @@ pipeline {
                 }
             }
         }
+        
+        stage('SonarQube Stage') {
+            steps {
+                script {
+                    dir('spring-boot-app') {
+                        withSonarQubeEnv('SonarQube') {
+                            sh './gradlew sonar'
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     // post {
