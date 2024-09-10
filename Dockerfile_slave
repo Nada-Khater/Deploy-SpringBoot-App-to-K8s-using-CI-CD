@@ -1,6 +1,7 @@
 FROM jenkins/jenkins:lts
 USER root
-#install docker client
+
+# Install Docker Client
 RUN apt-get update && \
     apt-get -y install apt-transport-https \
     ca-certificates \
