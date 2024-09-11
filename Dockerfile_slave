@@ -28,5 +28,10 @@ RUN cat /root/.ssh/id_rsa.pub > /root/.ssh/authorized_keys
 # Create the /run/sshd directory and set permissions
 RUN mkdir -p /run/sshd && chmod 755 /run/sshd
 
+# Install Kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
+    && chmod +x kubectl \
+    && mv kubectl /usr/local/bin/
+
 # Start the SSH server and keep it running
 CMD ["/bin/bash", "-c", "/usr/sbin/sshd -D"]
