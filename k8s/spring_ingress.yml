@@ -2,14 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: spring-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
-    - http:
-        paths:
-          - path: /live
-            pathType: Prefix
-            backend:
-              service:
-                name: spring-app-service
-                port:
-                  number: 80
+  - http:
+      paths:
+      - path: /live
+        pathType: Prefix
+        backend:
+          service:
+            name: spring-app-service
+            port:
+              number: 80
