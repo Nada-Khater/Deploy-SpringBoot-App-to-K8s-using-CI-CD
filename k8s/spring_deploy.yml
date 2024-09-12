@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-app
+  name: spring-app-deploy
   labels:
     app: spring-app
 spec:
@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: spring-app
-        image: nadakhater/spring-app:lts 
+        image: nadakhater/spring-app:lts
         ports:
         - containerPort: 8080
