@@ -2,10 +2,14 @@ pipeline {
     agent { 
         label 'slave_container'
     }
-    
+
     environment {
         DOCKER_USER = credentials('DOCKER_USER')
         DOCKER_PASS = credentials('DOCKER_PASS')
+    }
+    
+    parameters {
+        choice(name: 'NAMESPACE', choices: ['dev', 'prod'], description: 'Select Kubernetes NameSpace')
     }
     
     stages {
@@ -73,7 +77,42 @@ pipeline {
                 }
             }
         }
-
+        
+        stage('Verify and Create Namespace') {
+            steps {
+                script {
+                    withKubeConfig(credentialsId: 'mykubeconfig') {
+                        def namespace = params.NAMESPACE
+    
+                        // Check if the namespace exists and create it if not
+                        sh """
+                            if ! kubectl get namespace ${namespace} > /dev/null 2>&1; then
+                                echo "Namespace '${namespace}' does not exist. Creating..."
+                                kubectl create namespace ${namespace}
+                            else
+                                echo "Namespace '${namespace}' already exists."
+                            fi
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy to Minikube') {
+            steps {
+                script {
+                    dir('k8s') {
+                        withKubeConfig(credentialsId: 'mykubeconfig') {
+                            sh """
+                                kubectl apply -f spring_deploy.yml -n ${params.NAMESPACE}
+                                kubectl apply -f spring_service.yml -n ${params.NAMESPACE}
+                                kubectl apply -f spring_ingress.yml -n ${params.NAMESPACE}
+                            """
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // post {
