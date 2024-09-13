@@ -40,14 +40,15 @@ This project demonstrates how to dockerize a Spring Boot application and deploy 
     ```
 4. Credentials:
   - Docker Hub credentials stored in Jenkins as a secrets `DOCKER_USER` and `DOCKER_PASS`.
-  - Kubernetes `kubeconfig` stored in Jenkins with the ID `mykubeconfig`.
-  - SonarQube token stored in Jenkins with the ID `sonar`
+  - Kubernetes `kubeconfig` stored in Jenkins with ID `mykubeconfig`.
+  - SonarQube token stored in Jenkins with ID `sonar`.
+   <img src="https://github.com/user-attachments/assets/0ae23aa0-a0e8-4426-9992-8fbfdab6419c" width="920">
 
 ## 📷 Screenshots
 #### 1. Add node in jenkins master to act as `jenkins slave`.
   <img src="https://github.com/user-attachments/assets/6897c958-ee5c-4db8-b3a1-e75467ba8768" width="920">
   
-#### 2. Add credentials and the private key:
+#### 2. Add credentials and the private key.
   The key already created in the dockerfile then copy the private key into the slave node using:
   ```python
     docker exec -it <slave_container_name> bash
@@ -55,7 +56,7 @@ This project demonstrates how to dockerize a Spring Boot application and deploy 
   ```
    <img src="https://github.com/user-attachments/assets/c0fdacb2-b3a2-473b-89b1-32169234a23e" width="920">
    
-#### 3. Get the host ip (slave node) by running
+#### 3. Get the host ip (slave node) by running.
   ```python
     docker inspect <slave_container_name>
   ```
@@ -68,18 +69,18 @@ This project demonstrates how to dockerize a Spring Boot application and deploy 
 #### 4. Install SonarQube & SonarQube Scanner plugin from jenkins.
    <img src="https://github.com/user-attachments/assets/ce2b05e3-3a8c-4e1d-a0dc-ce66af7eeb57" width="920">
 
-#### Configure SonarQube server in jenkins
-- Generate SonarQube token
+#### Configure SonarQube server in jenkins.
+- Generate SonarQube token.
    <img src="https://github.com/user-attachments/assets/1df2483f-f813-4f7f-ba88-2a51b97282a2" width="920">
-   <img src="https://github.com/user-attachments/assets/5b4bb3c9-76d2-4720-b864-c0cab46c040d" width="920">
-- Install SonarQube Scanner & configure it
+   <img src="https://github.com/user-attachments/assets/e220b16b-0ba6-4f92-addd-19e387780667" width="920">
+- Install SonarQube Scanner & configure it.
    <img src="https://github.com/user-attachments/assets/1594e211-e156-4839-82a1-d760a5bc8d17" width="920">
 
-#### Create a new project in SonarQube
+#### Create a new project in SonarQube.
   <img src="https://github.com/user-attachments/assets/2048f13c-e7a7-4dc9-bb91-8dab5b9f5947" width="920">
   <img src="https://github.com/user-attachments/assets/88c674c9-9cc2-4486-b8e0-cd81a940c7b9" width="920">
   
-- In spring app add the following in `build.gradle`
+- In spring app add the following in `build.gradle` to allow Gradle to run SonarQube analysis on our code.
   ```python
     plugins {
       id "org.sonarqube" version "5.0.0.4638"
@@ -109,37 +110,36 @@ This project demonstrates how to dockerize a Spring Boot application and deploy 
   ```  
   <img src="https://github.com/user-attachments/assets/d19c9f4b-bb87-4232-90eb-0ad2cd6abfaf">
 ---
-## CI/CD Pipeline Stages
-The CI/CD pipeline consists of the following stages:
 
-### 1. **Checkout Code**
+## 🛠️ CI/CD Pipeline Stages
+#### 1. **Checkout Code**
    - The code is checked out from the GitHub repository's `dev` branch.
 
-### 2. **Lint Stage**
+#### 2. **Lint Stage**
    - Ensures the code follows proper formatting and style conventions.
    - Runs lint checks using Gradle's `check` task.
 
-### 3. **Unit Test Stage**
+#### 3. **Unit Test Stage**
    - Executes unit tests to verify the functionality of the application.
    - Runs unit tests using Gradle's `test` task.
 
-### 4. **SonarQube Stage**
+#### 4. **SonarQube Stage**
    - Performs static code analysis and ensures code quality standards
    - Runs SonarQube analysis to check the code quality of the Spring Boot app.
 
-### 5. **Build Image Stage**
+#### 5. **Build Image Stage**
    - Builds a Docker image of the Spring Boot application using the provided [Dockerfile](https://github.com/Nada-Khater/Deploy-SpringBoot-App-to-K8s-using-CI-CD/blob/dev/spring-boot-app/Dockerfile).
 
-### 6. **Push Image to Registry**
+#### 6. **Push Image to Registry**
    - Logs in to Docker Hub and pushes the built image to the Docker Hub repository.
 
-### 7. **Pull Image from Registry**
+#### 7. **Pull Image from Registry**
    - Pulls the image from the container registry to prepare for deployment.
 
-### 8. **Verify and Create Namespace**
+#### 8. **Verify and Create Namespace**
    - Verifies if the selected namespace (`dev` or `prod`) exists in the Kubernetes cluster and creates it if it doesn't.
 
-### 9. **Deploy to Minikube**
+#### 9. **Deploy to Minikube**
    - Deploys the Spring Boot application to the Kubernetes cluster in the specified namespace.
    - Applies deployment, service, and ingress YAML configurations.
    - Ingress configured for external access to the application and exposes a `/live` endpoint for health checks.
@@ -164,11 +164,24 @@ The CI/CD pipeline consists of the following stages:
                   port:
                     number: 80
       ```
-## Final Output
+## 💻 Final Output
+#### 1. Pipeline executed successfuly.
   <img src="https://github.com/user-attachments/assets/32bb8d05-b933-4650-8f76-2c92df51bd4d" width="920">
-  <img src="" width="920">
-  <img src="" width="920">
-
-
-
-
+  
+#### 2.  Image pushed to docker hub with name `nadakhater/spring-app`.
+  <img src="https://github.com/user-attachments/assets/9c59881a-f0c3-4f1b-999c-84babfb75341" width="920">
+  
+#### 3. SonarQube Stage.
+  <img src="https://github.com/user-attachments/assets/18e23dc5-cd08-4c20-8179-09d53ef2ba54" width="920">
+  <img src="https://github.com/user-attachments/assets/947cb267-1e83-497a-89b4-88c6160c8c34" width="920">
+  
+#### 4. Check status for the deployed app in the specified `dev` namespace.
+  <img src="https://github.com/user-attachments/assets/7743c351-02af-4e64-9a55-620dd21aab9c" width="920">
+  
+#### 5. Verify that the service is correctly routing traffic to pods.
+Service have endpoints so we can access the app through ingress.
+  ```python
+    minikube service ingress-nginx-controller --namespace=ingress-nginx --url
+    curl http://<external-ip-or-url>/live
+  ```
+  <img src="https://github.com/user-attachments/assets/e0cf8b11-9411-4e36-bda3-21df21599faf" width="920">
