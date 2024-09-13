@@ -167,18 +167,21 @@ This project demonstrates how to dockerize a Spring Boot application and deploy 
 ## 💻 Final Output
 #### 1. Pipeline executed successfuly.
   <img src="https://github.com/user-attachments/assets/32bb8d05-b933-4650-8f76-2c92df51bd4d" width="920">
-  
-#### 2.  Image pushed to docker hub with name `nadakhater/spring-app`.
+
+#### 2. Choose which namespace you want to deploy your app (`dev` or `prod`).
+  <img src="https://github.com/user-attachments/assets/fdc7a47a-23a5-4db1-9755-257d9fefd720" width="920">
+
+#### 3.  Image pushed to docker hub with name `nadakhater/spring-app`.
   <img src="https://github.com/user-attachments/assets/9c59881a-f0c3-4f1b-999c-84babfb75341" width="920">
   
-#### 3. SonarQube Stage.
+#### 4. SonarQube Stage.
   <img src="https://github.com/user-attachments/assets/18e23dc5-cd08-4c20-8179-09d53ef2ba54" width="920">
   <img src="https://github.com/user-attachments/assets/947cb267-1e83-497a-89b4-88c6160c8c34" width="920">
   
-#### 4. Check status for the deployed app in the specified `dev` namespace.
+#### 5. Check status for the deployed app in the specified `dev` namespace.
   <img src="https://github.com/user-attachments/assets/7743c351-02af-4e64-9a55-620dd21aab9c" width="920">
   
-#### 5. Verify that the service is correctly routing traffic to pods.
+#### 6. Verify that the service is correctly routing traffic to pods.
 Service have endpoints so we can access the app through ingress.
   ```python
     minikube service ingress-nginx-controller --namespace=ingress-nginx --url
