@@ -38,7 +38,10 @@ This project demonstrates how to dockerize a Spring Boot application and deploy 
     ```python
       docker run -d --name sonarqube -p 9000:9000 --network minikube sonarqube
     ```
- <img src="" width="920">
+4. Credentials:
+  - Docker Hub credentials stored in Jenkins as a secrets `DOCKER_USER` and `DOCKER_PASS`.
+  - Kubernetes `kubeconfig` stored in Jenkins with the ID `mykubeconfig`.
+  - SonarQube token stored in Jenkins with the ID `sonar`
 
 ## 📷 Screenshots
 #### 1. Add node in jenkins master to act as `jenkins slave`.
@@ -90,13 +93,81 @@ This project demonstrates how to dockerize a Spring Boot application and deploy 
   ```
 #### 5. Install kubernetesCLI plugin from jenkins.
   <img src="https://github.com/user-attachments/assets/45b3fdf9-9833-49ca-aba8-1500d65ba539" width="920">
+
+#### Configure k8sCLI plugin and link it with local minikube.
+  - Get kubeconfig file from our local k8s cluster and save it in a new file `minikube-config`
+  - Then upload `minikube-config` as a secret file in jenkins.
+  ```python
+    kubectl config view --minify --flatten >> minikube-config
+  ```
+  <img src="https://github.com/user-attachments/assets/882ac0a8-f731-4a3b-93a9-802e4eb4fd68" width="920">
+
+#### Ensure that ingress, ingress-dns addons enabled in your minikube cluster.
+  ```python
+    minikube addons enable ingress
+    minikube addons enable ingress-dns
+  ```  
+  <img src="https://github.com/user-attachments/assets/d19c9f4b-bb87-4232-90eb-0ad2cd6abfaf">
+---
+## CI/CD Pipeline Stages
+The CI/CD pipeline consists of the following stages:
+
+### 1. **Checkout Code**
+   - The code is checked out from the GitHub repository's `dev` branch.
+
+### 2. **Lint Stage**
+   - Ensures the code follows proper formatting and style conventions.
+   - Runs lint checks using Gradle's `check` task.
+
+### 3. **Unit Test Stage**
+   - Executes unit tests to verify the functionality of the application.
+   - Runs unit tests using Gradle's `test` task.
+
+### 4. **SonarQube Stage**
+   - Performs static code analysis and ensures code quality standards
+   - Runs SonarQube analysis to check the code quality of the Spring Boot app.
+
+### 5. **Build Image Stage**
+   - Builds a Docker image of the Spring Boot application using the provided [Dockerfile](https://github.com/Nada-Khater/Deploy-SpringBoot-App-to-K8s-using-CI-CD/blob/dev/spring-boot-app/Dockerfile).
+
+### 6. **Push Image to Registry**
+   - Logs in to Docker Hub and pushes the built image to the Docker Hub repository.
+
+### 7. **Pull Image from Registry**
+   - Pulls the image from the container registry to prepare for deployment.
+
+### 8. **Verify and Create Namespace**
+   - Verifies if the selected namespace (`dev` or `prod`) exists in the Kubernetes cluster and creates it if it doesn't.
+
+### 9. **Deploy to Minikube**
+   - Deploys the Spring Boot application to the Kubernetes cluster in the specified namespace.
+   - Applies deployment, service, and ingress YAML configurations.
+   - Ingress configured for external access to the application and exposes a `/live` endpoint for health checks.
+
+      ```yaml
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: spring-app-ingress
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /
+      spec:
+        ingressClassName: nginx
+        rules:
+        - http:
+            paths:
+            - path: /live
+              pathType: Prefix
+              backend:
+                service:
+                  name: spring-app-service
+                  port:
+                    number: 80
+      ```
+## Final Output
+  <img src="https://github.com/user-attachments/assets/32bb8d05-b933-4650-8f76-2c92df51bd4d" width="920">
   <img src="" width="920">
   <img src="" width="920">
-   
-
-
-
-
 
 
 
